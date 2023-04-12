@@ -2,21 +2,21 @@ DROP DATABASE IF EXISTS `chat`;
 CREATE DATABASE `chat`;
 USE `chat`;
 CREATE TABLE `users` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `username` varchar(255) NOT NULL,
     `password` varchar(255) NOT NULL,
-    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP PRIMARY KEY (`id`)
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE `room` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` varchar(255) NOT NULL,
     `created_by` int(11) NOT NULL,
-    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP PRIMARY KEY (`id`)
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE `messages` (
-    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `user_id` int(11) NOT NULL,
     `room_id` int(11) NOT NULL,
     `message` text NOT NULL,
-    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP PRIMARY KEY (`id`)
+    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
