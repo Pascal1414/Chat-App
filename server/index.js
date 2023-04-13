@@ -3,22 +3,39 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-const mysql = require('mysql');
 
-// create database connection
-const db = mysql.createConnection({
+
+console.log({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME
 });
+// create database connection
 
-// connect to database
-db.connect((err) => {
-    if (err) throw err;
-    console.log('Connected to database');
-});
+
+setTimeout(() => {
+    const mysql = require('mysql');
+
+    const db = mysql.createConnection({
+        host: process.env.DB_HOST || 'localhost',
+        user: process.env.DB_USER || 'root',
+        password: process.env.DB_PASSWORD || 'root',
+        database: process.env.DB_NAME || 'chat'
+    });
+
+    db.connect((err) => {
+        if (err) throw err;
+        console.log('Connected to database');
+    });
+}, 5000);
+
+// // connect to database
+// db.connect((err) => {
+//     if (err) throw err;
+//     console.log('Connected to database');
+// });
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
