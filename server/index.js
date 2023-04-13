@@ -13,8 +13,6 @@ console.log({
     database: process.env.DB_NAME
 });
 // create database connection
-
-
 setTimeout(() => {
     const mysql = require('mysql');
 
@@ -25,28 +23,23 @@ setTimeout(() => {
         database: process.env.DB_NAME
     });
 
+    // connect to database
     db.connect((err) => {
         if (err) throw err;
         console.log('Connected to database');
     });
-}, 5000);
 
-// // connect to database
-// db.connect((err) => {
-//     if (err) throw err;
-//     console.log('Connected to database');
-// });
-
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
-
-app.get('/rooms', (req, res) => {
-    db.query('SELECT * FROM rooms', (err, result) => {
-        if (err) throw err;
-        res.send(result);
+    app.get('/', (req, res) => {
+        res.send('Hello World!');
     });
-});
+
+    app.get('/rooms', (req, res) => {
+        db.query('SELECT * FROM rooms', (err, result) => {
+            if (err) throw err;
+            res.send(result);
+        });
+    });
+}, 5000);
 
 // Rum server   
 app.listen(port, () => {

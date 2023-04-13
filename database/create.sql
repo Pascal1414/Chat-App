@@ -7,7 +7,7 @@ CREATE TABLE `users` (
     `password` varchar(255) NOT NULL,
     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-CREATE TABLE `room` (
+CREATE TABLE `rooms` (
     `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `name` varchar(255) NOT NULL,
     `created_by` int(11) NOT NULL,
