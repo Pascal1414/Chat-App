@@ -5,21 +5,34 @@ const port = 3000;
 
 
 
-console.info( "Database connection details",  {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
-});
+
 // create database connection
 setTimeout(() => {
     const mysql = require('mysql');
 
-    const db = mysql.createConnection({
+    let db = mysql.createConnection({
         host: process.env.DB_HOST,
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_NAME
+    });
+
+    if (process.env.DB_HOST == null) {
+        console.warn("DB_HOST is null, using static connection details"); 
+        db = mysql.createConnection({
+            host: "localhost",
+            port: 3307,
+            user: "root",
+            password: "root",
+            database: "chat" 
+        });
+    }
+
+    console.info("Database connection details", {
+        host: db.host,
+        user: db.user,
+        password: db.password,
+        database: db.database 
     });
 
     // connect to database
