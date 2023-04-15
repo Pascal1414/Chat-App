@@ -5,12 +5,11 @@ CREATE TABLE `users` (
     `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `username` varchar(255) NOT NULL,
     `password` varchar(255) NOT NULL,
-    `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+    `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE `rooms` (
     `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `name` varchar(255) NOT NULL,
-    `created_by` int(11) NOT NULL,
+    `name` varchar(255) NOT NULL UNIQUE,
     `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE `messages` (
