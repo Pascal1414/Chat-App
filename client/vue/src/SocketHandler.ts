@@ -23,6 +23,12 @@ const funcions = {
   },
   joinRoom(name: string) {
     socket.emit("join-room", name);
+  },
+  onMessage(callback: (data: any) => void) {
+    socket.on("message", callback);
+  },
+  sendMessage(message: string) {
+    socket.emit("message", message);
   }
 };
 export default funcions;

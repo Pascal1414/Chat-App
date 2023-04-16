@@ -5,36 +5,42 @@ import SocketHandler from './SocketHandler'
 
 export default {
   name: 'App',
-    data() {
+  data() {
     return {
+      message: ''
     }
   },
   components: {
     SideBar,
   },
   created() {
-    
+    SocketHandler.onMessage((data: any) => {
+      console.log(data);
+    })
   },
   methods: {
-    createRoom(name: string){
+    createRoom(name: string) {
       SocketHandler.createRoom(name);
     },
-    joinRoom(name: string){
+    joinRoom(name: string) {
       SocketHandler.joinRoom(name);
+    },
+    sendMessage(message: string) {
+      SocketHandler.sendMessage(message);
     }
   }
 }
 </script>
 
 <template>
- <SideBar></SideBar> 
+  <SideBar></SideBar>
   <RouterView />
   <button @click.prevent="createRoom('test')">Create Room</button>
   <button @click.prevent="joinRoom('test')">Join Room</button>
 
+  <form @submit.prevent="sendMessage(message)">
+    <input type="text" v-model="message">
+  </form>
 </template>
 
-<style scoped>
-
-
-</style>
+<style scoped></style>

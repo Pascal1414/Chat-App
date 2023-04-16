@@ -1,5 +1,6 @@
 //Express App
 const { log } = require('console');
+const { captureRejectionSymbol } = require('events');
 const express = require('express');
 const app = express();
 const http = require("http");
@@ -77,20 +78,40 @@ setTimeout(() => {
                 if (err) throw err;
 
                 console.log(result);
-                if (result.includes(room)) {
+                console.log(room);
+                console.log(result.map(r=> r.name == room));
+                if (result.map(r=> r.name == room) ) {
                     socket.join(room);
                     socket.emit('success', 'Joined room');
+                    console.log('joined room');
                 } else {
                     socket.emit('error', 'Room does not exist');
+                    console.log('room does not exist');
                 }
             });
+
+            socket.on('message', (message) => {
+                console.log('message sent: ' + message);
+                io.to(room).emit('message', message);
+            });
         });
+
         socket.on('create-room', (room, message) => {
             console.log('creating room');
             //insert room into database
+            // Catch error if room already exists
+
             db.query(`INSERT INTO rooms (name) VALUES ('${room}')`, (err, result) => {
-                if (err) throw err;
-                socket.emit('success', 'Room created');
+                if (err) {
+                    if (err.code == 'ER_DUP_ENTRY') {
+                        socket.emit('error', 'Room already exists');
+                        console.log('room already exists');
+                    }
+                    else throw err;
+                }
+                else {
+                    socket.emit('success', 'Room created');
+                }
             });
         });
     });
