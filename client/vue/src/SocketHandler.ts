@@ -29,6 +29,9 @@ const funcions = {
   },
   sendMessage(message: string) {
     socket.emit("message", message);
+  },
+  onRoomCreated(callback: (roomName: string) => void) {
+    socket.on("onRoomCreated", callback);
   }
 };
 export default funcions;

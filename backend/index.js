@@ -42,6 +42,11 @@ setTimeout(() => {
         console.log('Connected to database');
     });
 
+  app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+  next();
+});
+
     app.get('/', (req, res) => {
         res.send('Hello World!');
     });
@@ -54,8 +59,7 @@ setTimeout(() => {
     });
 
 
-
-    const server = http.createServer(app)
+ const server = http.createServer(app)
     io = new Server(server, {
         cors: {
             origin: [
@@ -64,6 +68,7 @@ setTimeout(() => {
             ]
         }
     });
+
     io.on('connection', (socket) => {
         console.log('new connection');
 
@@ -79,10 +84,10 @@ setTimeout(() => {
 
                 console.log(result);
                 console.log(room);
-                console.log(result.map(r=> r.name == room));
-                if (result.map(r=> r.name == room) ) {
+                console.log(result.map(r => r.name == room));
+                if (result.map(r => r.name == room)) {
                     socket.join(room);
-                    socket.emit('success', 'Joined room');
+                    socket.emit('success', 'Joined room: ' + room);
                     console.log('joined room');
                 } else {
                     socket.emit('error', 'Room does not exist');
@@ -98,9 +103,6 @@ setTimeout(() => {
 
         socket.on('create-room', (room, message) => {
             console.log('creating room');
-            //insert room into database
-            // Catch error if room already exists
-
             db.query(`INSERT INTO rooms (name) VALUES ('${room}')`, (err, result) => {
                 if (err) {
                     if (err.code == 'ER_DUP_ENTRY') {
@@ -111,6 +113,7 @@ setTimeout(() => {
                 }
                 else {
                     socket.emit('success', 'Room created');
+                    io.emit('onRoomCreated', room);
                 }
             });
         });
