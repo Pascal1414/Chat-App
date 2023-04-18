@@ -42,10 +42,10 @@ setTimeout(() => {
         console.log('Connected to database');
     });
 
-  app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-  next();
-});
+    app.use(function (req, res, next) {
+        res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+        next();
+    });
 
     app.get('/', (req, res) => {
         res.send('Hello World!');
@@ -59,7 +59,7 @@ setTimeout(() => {
     });
 
 
- const server = http.createServer(app)
+    const server = http.createServer(app)
     io = new Server(server, {
         cors: {
             origin: [
@@ -89,6 +89,14 @@ setTimeout(() => {
                     socket.join(room);
                     socket.emit('success', 'Joined room: ' + room);
                     console.log('joined room');
+
+
+                    //get messages from database
+                    db.query(`SELECT message FROM messages WHERE room_id = (SELECT id FROM rooms WHERE name = '${room}')`, (err, result) => {
+                        if (err) throw err;
+
+                        socket.emit('messages', result.map(r => r.message));
+                    });
                 } else {
                     socket.emit('error', 'Room does not exist');
                     console.log('room does not exist');
@@ -97,24 +105,32 @@ setTimeout(() => {
 
             socket.on('message', (message) => {
                 console.log('message sent: ' + message);
-                io.to(room).emit('message', message);
-            });
-        });
 
-        socket.on('create-room', (room, message) => {
-            console.log('creating room');
-            db.query(`INSERT INTO rooms (name) VALUES ('${room}')`, (err, result) => {
-                if (err) {
-                    if (err.code == 'ER_DUP_ENTRY') {
-                        socket.emit('error', 'Room already exists');
-                        console.log('room already exists');
+                db.query(`SELECT id FROM rooms WHERE name = '${room}'`, (err, result) => {
+                    if (err) throw err;
+
+                    if (result.length > 0)
+                        db.query(`INSERT INTO messages (room_id, message) VALUES (${result[0].id}, '${message}')`, (err, result) => {
+                            if (err) throw err;
+                            console.log('message saved');
+                            io.to(room).emit('message', message);
+                        });
+                });
+            });
+
+            socket.on('create-room', (room, message) => {
+                console.log('creating room');
+                db.query(`INSERT INTO rooms (name) VALUES ('${room}')`, (err, result) => {
+                    if (err) {
+                        if (err.code == 'ER_DUP_ENTRY') {
+                            socket.emit('error', 'Room already exists');
+                            console.log('room already exists');
+                        } else throw err;
+                    } else {
+                        socket.emit('success', 'Room created');
+                        io.emit('onRoomCreated', room);
                     }
-                    else throw err;
-                }
-                else {
-                    socket.emit('success', 'Room created');
-                    io.emit('onRoomCreated', room);
-                }
+                });
             });
         });
     });
@@ -125,4 +141,3 @@ setTimeout(() => {
         console.log(`Chat app listening at http://localhost:${port}`)
     });
 }, 5000);
-

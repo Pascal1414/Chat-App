@@ -1,28 +1,41 @@
 <script lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import SocketHandler from './SocketHandler'
+import RoomSelection from './components/RoomSelection.vue';
 
 export default {
-  name: 'App',
+  name: "App",
   data() {
     return {
-      message: ''
-    }
+      message: ""
+    };
   },
   methods: {
     createRoom(name: string) {
       SocketHandler.createRoom(name);
     },
-    
     sendMessage(message: string) {
       SocketHandler.sendMessage(message);
     }
-  }
+  },
+  components: { RoomSelection }
 }
 </script>
 
 <template>
-  <RouterView />
+  <div class="split">
+    <div>
+      <RoomSelection />
+    </div>
+    <div>
+      <RouterView />
+    </div>
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.split {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+}
+</style>

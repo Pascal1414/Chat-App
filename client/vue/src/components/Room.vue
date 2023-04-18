@@ -4,7 +4,7 @@
             {{ message }}
         </div>
     </div>
-    <form @submit.prevent="sendMessage(formMessage)">
+    <form @submit.prevent="sendMessage()">
         <input type="text" v-model="formMessage">
         <input type="submit" value="Send">
     </form>
@@ -34,10 +34,15 @@ export default {
             console.log(message);
             this.messages.push(message);
         })
+
+        SocketHandler.onMessages((messages: Array<string>) => {
+            this.messages = messages;
+        })
     },
     methods: {
-        sendMessage(message: string) {
-            SocketHandler.sendMessage(message);
+        sendMessage() {
+            SocketHandler.sendMessage(this.formMessage);
+            this.formMessage = '';
         }
     }
 }
