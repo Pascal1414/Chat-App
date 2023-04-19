@@ -24,6 +24,9 @@ const funcions = {
   joinRoom(name: string) {
     socket.emit('join-room', name)
   },
+  leaveRoom(name: string) {
+    socket.emit('leave-room', name)
+  },
   onMessage(callback: (data: any) => void) {
     socket.on('message', callback)
   },

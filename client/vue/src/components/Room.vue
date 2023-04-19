@@ -39,6 +39,16 @@ export default {
             this.messages = messages;
         })
     },
+    watch: {
+        '$route'(to, from) {
+            if (to.params.name !== from.params.name) {
+                console.log("url changed");
+                SocketHandler.leaveRoom(from.params.name);
+
+                SocketHandler.joinRoom(to.params.name);
+            }
+        }
+    },
     methods: {
         sendMessage() {
             SocketHandler.sendMessage(this.formMessage);

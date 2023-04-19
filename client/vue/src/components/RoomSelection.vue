@@ -24,6 +24,8 @@ export default {
         }
     },
     created() {
+        console.log("fetching rooms");
+
         this.fetchRooms();
 
         SocketHandler.onRoomCreated((roomName: string) => {

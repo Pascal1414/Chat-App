@@ -86,9 +86,21 @@ setTimeout(() => {
                 console.log(room);
                 console.log(result.map(r => r.name == room));
                 if (result.map(r => r.name == room)) {
+                    //check if socket is already in room
+                    if (socket.rooms.has(room)) {
+                        socket.emit('error', 'Already in room: ' + room);
+                        console.log('already in room');
+                        return;
+                    }
                     socket.join(room);
                     socket.emit('success', 'Joined room: ' + room);
                     console.log('joined room');
+
+                    socket.on('leave-room', () => {
+                        socket.leave(room);
+                        socket.emit('success', 'Left room: ' + room);
+                        console.log('left room');
+                    });
 
 
                     //get messages from database
@@ -117,24 +129,29 @@ setTimeout(() => {
                         });
                 });
             });
-
-            socket.on('create-room', (room, message) => {
-                console.log('creating room');
-                db.query(`INSERT INTO rooms (name) VALUES ('${room}')`, (err, result) => {
-                    if (err) {
-                        if (err.code == 'ER_DUP_ENTRY') {
-                            socket.emit('error', 'Room already exists');
-                            console.log('room already exists');
-                        } else throw err;
-                    } else {
-                        socket.emit('success', 'Room created');
-                        io.emit('onRoomCreated', room);
-                    }
-                });
+        });
+        socket.on('create-room', (room, message) => {
+            console.log('creating room');
+            db.query(`INSERT INTO rooms (name) VALUES ('${room}')`, (err, result) => {
+                if (err) {
+                    if (err.code == 'ER_DUP_ENTRY') {
+                        socket.emit('error', 'Room already exists');
+                        console.log('room already exists');
+                    } else throw err;
+                } else {
+                    socket.emit('success', 'Room created');
+                    io.emit('onRoomCreated', room);
+                }
             });
         });
-    });
 
+
+        socket.on('leave-room', (room) => {
+            socket.leave(room);
+            socket.emit('success', 'Left room: ' + room);
+            console.log('left room');
+        });
+    });
 
     // Rum server   
     server.listen(port, () => {
