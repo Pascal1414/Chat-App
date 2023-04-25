@@ -43,7 +43,7 @@ setTimeout(() => {
     });
 
     app.use(function (req, res, next) {
-        res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+        res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
         next();
     });
 
@@ -63,8 +63,8 @@ setTimeout(() => {
     io = new Server(server, {
         cors: {
             origin: [
-                "http://localhost:5173",
-                "http://127.0.0.1:5173"
+                "http://localhost:8080",
+                "http://127.0.0.1:8080"
             ]
         }
     });

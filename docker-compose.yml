@@ -16,7 +16,7 @@ services:
 
   backend:
     build: ./backend
-    container_name: backend 
+    container_name: backend
     ports:
       - "3000:3000"
     depends_on:
@@ -26,12 +26,12 @@ services:
       - DB_USER=root
       - DB_PASSWORD=root
       - DB_NAME=chat
-  
+
   frontend:
     build: ./client/vue
     container_name: frontend
     ports:
-      - "5173:80"
+      - "8080:8080"
     depends_on:
       - backend
     environment:
